@@ -1,0 +1,27 @@
+name: Build and demo
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install C++ dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ libopencv-dev
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --parallel 2
+      - name: Run synthetic demos
+        run: |
+          python3 scripts/run_demo.py lab1
+          python3 scripts/run_demo.py lab2
+          python3 scripts/run_demo.py lab3
+          python3 scripts/run_demo.py lab4
+          python3 scripts/run_demo.py lab5
+          python3 scripts/run_demo.py lab6
